@@ -11,6 +11,11 @@ _static int proximoID: Al ser static, la primera vez vale 1000, la segunda 1001,
 
 **strcmp es una función de la biblioteca estándar de C (<string.h>) que compara dos cadenas de caracteres (strings) carácter por carácter, basándose en sus valores ASCII. Devuelve un entero: 0 si son iguales, un valor negativo si la primera cadena es menor, o positivo si es mayor**
 
+## anotaciones 03/05/26
+*No eliminar un nodo luego de haberlo cambiado de lugar de una lista a otra(de pendientes a realizadas), pero por una cuestión de que si se elimina es de forma definitiva y la lista nueva que contiene ese valor accede a valor basura. Solo eliminar cuando no se usa en ninguna lista, no cuando el valor sigue "viviendo" en una.*
+
+**La lista que paso como parámetro para sacar al nodo es la que ya estaba llena, no la nueva a la que quiero agregarle esos nodos por mas que en esa es en la que me focalizo para trabajar.**
+**A la que si cambio de parámetro segun a la lista a la que le estoy insertando cosas es a la función insertarEnLista**
 
 
 

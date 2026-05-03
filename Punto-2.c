@@ -3,8 +3,7 @@
 #include<string.h>
 #include<time.h>
 
-/* Implemente una interfaz para elegir qué tareas de la lista de pendientes deben ser transferidas 
-a la lista de tareas realizadas.*/
+/* Implemente una funcionalidad que permita listar todas las tareas pendientes y realizadas.*/
 
 typedef struct  Tarea{
     int TareaID;//numérico autoincremental comenzando en 1000
@@ -21,11 +20,12 @@ typedef struct Nodo{
 Tarea crearTarea();
 Nodo *crearNodo(Tarea T);
 Nodo *crearListaVacia();
-Nodo *buscarNodo(Nodo *start, int IdBuscado); //idea: buscar el elemento a sacar
+// Nodo *buscarNodo(Nodo *start, int IdBuscado);
 Nodo *quitarNodo(Nodo **start, int idQuitar);
 Nodo *eliminarNodo(Nodo *nodoParaElim);
 void insertarNodoEnLista(Nodo **start, Nodo *nuevoNodo);
 void mostrarDatos(Tarea T);
+void listarLista(Nodo *nodoAux);
 
 void limpioBuffer();
 
@@ -56,6 +56,7 @@ int main(){
         resp[strcspn(resp, "\n")] = '\0';
     }
     
+
     Nodo *tareaRealizada = crearListaVacia();
 
     printf("Tiene para ingresar UN id de alguna tarea realizada?(si o no):");
@@ -69,27 +70,29 @@ int main(){
             scanf("%d",&id);
 
             limpioBuffer(); //siempre despues de un scanf y antes de fgets
+            //quitarNodo(&start, id);
+            Nodo *nodoParaQuitar = quitarNodo(&start, id);
 
-            //Nodo *nodoEncontrado = buscarNodo(&start,id);
-            //if(nodoEncontrado != NULL){
-                Nodo *nodoParaQuitar = quitarNodo(&start, id);
+            if (nodoParaQuitar != NULL){
                 printf("Transfiriendo tarea: %s\n",nodoParaQuitar->T.Descripcion);
                 insertarNodoEnLista(&tareaRealizada, nodoParaQuitar);
-                eliminarNodo(nodoParaQuitar);
-
-                if(eliminarNodo){
-                    printf("El nodo %d fue quitado\n", id);
-                }
-            //}else{
-            //     printf("ID %d no encontrado en pendientes.\n", id);
-            //}
+            }else{
+                printf("No se encontro el ID %d en pendientes.\n",id);
+            }
             
-            printf("¿Quiere ingresar otro id?");
+            printf("¿Quiere ingresar otro id?(si o no):");
             fgets(resp,10,stdin);
             resp[strcspn(resp, "\n")] = '\0';
 
         }while(strcmp("si",resp) == 0);
     }
+
+    //listar tareas pendientes y realizadas:
+    printf("Lista de tareas PENDIENTES:\n");
+    listarLista(start);
+
+    printf("Lista de tareas REALIZADAS:\n");
+    listarLista(tareaRealizada);
     
     return 0;
 }
@@ -138,13 +141,13 @@ void insertarNodoEnLista (Nodo **start, Nodo *nuevoNodo){
     *start = nuevoNodo;
 }
 
-Nodo *buscarNodo(Nodo *start, int IdBuscado){
-    Nodo *aux = start;
-    while(aux != NULL &&aux->T.TareaID != IdBuscado){
-        aux = aux->Siguiente;
-    }
-    return aux;
-}
+// Nodo *buscarNodo(Nodo *start, int IdBuscado){
+//     Nodo *aux = start;
+//     while(aux != NULL &&aux->T.TareaID != IdBuscado){
+//         aux = aux->Siguiente;
+//     }
+//     return aux;
+// }
 
 Nodo *quitarNodo(Nodo **start, int idQuitar){
     Nodo *nodoAux = (*start);
@@ -166,9 +169,10 @@ Nodo *quitarNodo(Nodo **start, int idQuitar){
     return (nodoAux);
 }
 
-Nodo *eliminarNodo(Nodo *nodoParaElim){
-    if(nodoParaElim != NULL){
-        free(nodoParaElim);
+void listarLista(Nodo *nodoAux){
+    while(nodoAux != NULL){
+        mostrarDatos(nodoAux->T);
+        nodoAux = nodoAux->Siguiente;
     }
 }
 
