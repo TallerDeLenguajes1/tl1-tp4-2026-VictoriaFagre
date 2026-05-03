@@ -9,6 +9,8 @@
 
 _static int proximoID: Al ser static, la primera vez vale 1000, la segunda 1001, y así sucesivamente sin necesidad de pasarle parámetros extras._
 
+**strcmp es una función de la biblioteca estándar de C (<string.h>) que compara dos cadenas de caracteres (strings) carácter por carácter, basándose en sus valores ASCII. Devuelve un entero: 0 si son iguales, un valor negativo si la primera cadena es menor, o positivo si es mayor**
+
 
 
 

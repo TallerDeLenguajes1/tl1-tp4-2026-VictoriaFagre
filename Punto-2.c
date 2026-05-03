@@ -3,10 +3,8 @@
 #include<string.h>
 #include<time.h>
 
-/*Desarrolle una interfaz de carga de tareas para solicitar tareas pendientes, en la cual se solicite descripción
- y duración de la misma (el id debe ser generado automáticamente por el sistema, de manera autoincremental comenzando
-  desde el número 1000). Al cabo de cada tarea consulte al usuario si desea ingresar una nueva tarea o finalizar la 
-  carga. */
+/* Implemente una interfaz para elegir qué tareas de la lista de pendientes deben ser transferidas 
+a la lista de tareas realizadas.*/
 
 typedef struct  Tarea{
     int TareaID;//numérico autoincremental comenzando en 1000
@@ -19,12 +17,14 @@ typedef struct Nodo{
     struct Nodo *Siguiente;
 }Nodo;
 
-int band = 1;
 
 Tarea crearTarea();
 Nodo *crearNodo(Tarea T);
 Nodo *crearListaVacia();
-void insertarNodoEnLista(Nodo *start, Nodo *nuevoNodo);
+Nodo *buscarNodo(Nodo *start, int IdBuscado); //idea: buscar el elemento a sacar
+Nodo *quitarNodo(Nodo **start, int idQuitar);
+Nodo *eliminarNodo(Nodo *nodoParaElim);
+void insertarNodoEnLista(Nodo **start, Nodo *nuevoNodo);
 void mostrarDatos(Tarea T);
 
 void limpioBuffer();
@@ -55,8 +55,42 @@ int main(){
         fgets(resp,10,stdin);
         resp[strcspn(resp, "\n")] = '\0';
     }
+    
+    Nodo *tareaRealizada = crearListaVacia();
 
+    printf("Tiene para ingresar UN id de alguna tarea realizada?(si o no):");
+    fgets(resp,10,stdin);
+    resp[strcspn(resp, "\n")] = '\0';
 
+    if(strcmp("si",resp) == 0){
+        do{
+            int id;
+            printf("Ingrese el ID de la tarea que fue realizada:");
+            scanf("%d",&id);
+
+            limpioBuffer(); //siempre despues de un scanf y antes de fgets
+
+            //Nodo *nodoEncontrado = buscarNodo(&start,id);
+            //if(nodoEncontrado != NULL){
+                Nodo *nodoParaQuitar = quitarNodo(&start, id);
+                printf("Transfiriendo tarea: %s\n",nodoParaQuitar->T.Descripcion);
+                insertarNodoEnLista(&tareaRealizada, nodoParaQuitar);
+                eliminarNodo(nodoParaQuitar);
+
+                if(eliminarNodo){
+                    printf("El nodo %d fue quitado\n", id);
+                }
+            //}else{
+            //     printf("ID %d no encontrado en pendientes.\n", id);
+            //}
+            
+            printf("¿Quiere ingresar otro id?");
+            fgets(resp,10,stdin);
+            resp[strcspn(resp, "\n")] = '\0';
+
+        }while(strcmp("si",resp) == 0);
+    }
+    
     return 0;
 }
 
@@ -99,9 +133,43 @@ Nodo *crearListaVacia(){
     return NULL;
 }
 
-void insertarNodoEnLista (Nodo *start, Nodo *nuevoNodo){
-    nuevoNodo->Siguiente = start;
-    start = nuevoNodo;
+void insertarNodoEnLista (Nodo **start, Nodo *nuevoNodo){
+    nuevoNodo->Siguiente = *start;
+    *start = nuevoNodo;
+}
+
+Nodo *buscarNodo(Nodo *start, int IdBuscado){
+    Nodo *aux = start;
+    while(aux != NULL &&aux->T.TareaID != IdBuscado){
+        aux = aux->Siguiente;
+    }
+    return aux;
+}
+
+Nodo *quitarNodo(Nodo **start, int idQuitar){
+    Nodo *nodoAux = (*start);
+    Nodo *nodoAnt = NULL;
+
+    while(nodoAux != NULL && nodoAux->T.TareaID != idQuitar){
+        nodoAnt = nodoAux;
+        nodoAux = nodoAux->Siguiente;
+    }
+    if (nodoAux != NULL){
+        if (nodoAux == (*start)){
+            (*start) = nodoAux->Siguiente;
+        }else{
+            nodoAnt->Siguiente = nodoAux->Siguiente;
+        }
+
+        nodoAux->Siguiente = NULL;
+    }
+    return (nodoAux);
+}
+
+Nodo *eliminarNodo(Nodo *nodoParaElim){
+    if(nodoParaElim != NULL){
+        free(nodoParaElim);
+    }
 }
 
 void mostrarDatos(Tarea T){
