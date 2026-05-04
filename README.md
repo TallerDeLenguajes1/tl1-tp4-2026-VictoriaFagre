@@ -17,5 +17,8 @@ _static int proximoID: Al ser static, la primera vez vale 1000, la segunda 1001,
 **La lista que paso como parámetro para sacar al nodo es la que ya estaba llena, no la nueva a la que quiero agregarle esos nodos por mas que en esa es en la que me focalizo para trabajar.**
 **A la que si cambio de parámetro segun a la lista a la que le estoy insertando cosas es a la función insertarEnLista**
 
+**strstr no compara bien si no limpio /0 al final del string**
+**strstr(cadenaAcomparar, palabraIngresada): devuelve null si no encuentra nada o devuelve un puntero desde el primer elemento encontrado con coincidencias**
+
 
 

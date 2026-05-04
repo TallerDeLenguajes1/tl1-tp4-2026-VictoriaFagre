@@ -20,7 +20,7 @@ typedef struct Nodo{
 Tarea crearTarea();
 Nodo *crearNodo(Tarea T);
 Nodo *crearListaVacia();
-// Nodo *buscarNodo(Nodo *start, int IdBuscado);
+Nodo *buscarTarea(Nodo *start, Nodo *tareaRealiz);
 Nodo *quitarNodo(Nodo **start, int idQuitar);
 Nodo *eliminarNodo(Nodo *nodoParaElim);
 void insertarNodoEnLista(Nodo **start, Nodo *nuevoNodo);
@@ -93,6 +93,8 @@ int main(){
 
     printf("Lista de tareas REALIZADAS:\n");
     listarLista(tareaRealizada);
+
+    buscarTarea(start,tareaRealizada);
     
     return 0;
 }
@@ -141,14 +143,6 @@ void insertarNodoEnLista (Nodo **start, Nodo *nuevoNodo){
     *start = nuevoNodo;
 }
 
-// Nodo *buscarNodo(Nodo *start, int IdBuscado){
-//     Nodo *aux = start;
-//     while(aux != NULL &&aux->T.TareaID != IdBuscado){
-//         aux = aux->Siguiente;
-//     }
-//     return aux;
-// }
-
 Nodo *quitarNodo(Nodo **start, int idQuitar){
     Nodo *nodoAux = (*start);
     Nodo *nodoAnt = NULL;
@@ -174,6 +168,71 @@ void listarLista(Nodo *nodoAux){
         mostrarDatos(nodoAux->T);
         nodoAux = nodoAux->Siguiente;
     }
+}
+
+Nodo *buscarTarea(Nodo *start, Nodo *tareaRealiz){
+    char consul[10];
+    printf("Buscar tarea por id o palabra?(ESCRIBIR: id o palabra):");
+    fgets(consul,10,stdin);
+    consul[strcspn(consul, "\n")] = '\0';
+
+    int bandera = 0;
+
+    if(strcmp("id",consul)==0){
+        int id;
+        printf("ID a consultar:");
+        scanf("%d",&id);
+
+        limpioBuffer();
+
+        Nodo *aux1;
+        aux1 = start;
+        while(aux1 != NULL && aux1->T.TareaID != id){
+             aux1 = aux1->Siguiente;
+        }
+
+        //aux1 da o el valor buscado o null 
+        if(aux1 != NULL){
+            printf("PENDIENTES: La tarea buscada es: %s",aux1->T.Descripcion);
+            bandera = 1;
+        }else{
+            aux1 = tareaRealiz;
+            while(aux1 != NULL && aux1->T.TareaID != id){
+                aux1 = aux1->Siguiente;
+            }
+            if (aux1 != NULL){
+                printf("REALIZADAS: La tarea buscada es: %s",aux1->T.Descripcion);
+                bandera = 1;
+            }
+        }
+    
+    }else{
+
+        printf("Palabra clave para buscar en descripción:");
+        fgets(consul,10,stdin);
+        consul[strcspn(consul, "\n")] = '\0'; //NO COMPARA BIEN strstr si no saco \0
+
+        Nodo *aux2;
+        aux2 = start;
+        while(aux2 != NULL){
+            if (strstr(aux2->T.Descripcion,consul) != NULL){
+                printf("PENDIENTES:La tarea buscada es: %s.\n",aux2->T.Descripcion);
+                bandera = 1;
+            }
+            aux2 = aux2->Siguiente;
+        } 
+
+        aux2 = tareaRealiz;
+        while(aux2 != NULL){
+            if(strstr(aux2->T.Descripcion,consul)!=NULL){
+                printf("REALIZADAS:La tarea buscada es: %s.\n",aux2->T.Descripcion);
+                bandera = 1;
+            }
+            aux2 = aux2->Siguiente;
+        }
+    }
+    
+    if(bandera != 0 && bandera != 1) printf("No hay tareas con esa palabra.\n");
 }
 
 void mostrarDatos(Tarea T){
